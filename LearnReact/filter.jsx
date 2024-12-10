@@ -167,6 +167,7 @@ const PRODUCTS = [
 ];
 
 export default function Filter() {
+  // 아래 state 는 FilterableProductTable 에 옮겨도 무방함
   const [searchWord, setSearchWord] = useState('');
   const [showStocked, setShowStocked] = useState(false);
   return <FilterableProductTable
