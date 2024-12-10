@@ -129,7 +129,7 @@ function SearchBar({searchWord, setSearchWord, showStocked, setShowStocked}) {
       <label>
         <input
           type="checkbox"
-          value = {showStocked}
+          checked = {showStocked} //checked로 해줘야함!!
           onChange = {e => setShowStocked(e.target.checked)}
         />
         {' '}
