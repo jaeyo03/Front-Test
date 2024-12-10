@@ -31,35 +31,92 @@ function ProductTable({ products, searchWord, showStocked }) {
   const rows = [];
   let lastCategory = null;
 
-  // 이런식으로 필터하기
+  // 방법 1. 이런식으로 필터하기
 
-  // const filteredProducts = products.filter(product => {
-  //   const trimmedSearchWord = searchWord.trim().toLowerCase();
-  //   if (showStocked && !product.stocked) return false; // 이런 조건문 아주 좋다 , 옵션이 있는지 보고 그 옵션이 product 와 맞는지 한번에 보는 좋은 방법
-  // 아래도 마찬가지
-  //   if (trimmedSearchWord && !product.name.toLowerCase().includes(trimmedSearchWord)) return false; //
-  //   return true;
-  // });
+  const filteredProducts = products.filter(product => {
+    const trimmedSearchWord = searchWord.trim().toLowerCase();
+    if (showStocked && !product.stocked) return false; // 이런 조건문 아주 좋다 , 옵션이 있는지 보고 그 옵션이 product 와 맞는지 한번에 보는 좋은 방법
+    if (trimmedSearchWord && !product.name.toLowerCase().includes(trimmedSearchWord)) return false; //
+    return true;
+  });
 
   // 필터로 하면 아래처럼 깔끔하게 작성 가능!
 
-  // filteredProducts.forEach(product => {
-  //   if (product.category !== lastCategory) {
-  //     rows.push(
-  //       <ProductCategoryRow
-  //         category={product.category}
-  //         key={product.category}
-  //       />
-  //     );
-  //   }
-  //   rows.push(
-  //     <ProductRow
-  //       product={product}
-  //       key={`${product.category}-${product.name}`}
-  //     />
-  //   );
-  //   lastCategory = product.category;
-  // });
+  filteredProducts.forEach(product => {
+    if (product.category !== lastCategory) {
+      rows.push(
+        <ProductCategoryRow
+          category={product.category}
+          key={product.category}
+        />
+      );
+    }
+    rows.push(
+      <ProductRow
+        product={product}
+        key={`${product.category}-${product.name}`}
+      />
+    );
+    lastCategory = product.category;
+  });
+
+  // 방법 2. 필터 없이 forEach 에서 한번에 처리도 가능! - filter 연산이 따로 없어서 연산량이 줄어든다
+  products.forEach((product) => {
+    if (
+      product.name.toLowerCase().indexOf(
+        filterText.toLowerCase()
+      ) === -1
+    ) {
+      return;
+    }
+    if (inStockOnly && !product.stocked) {
+      return;
+    }
+    if (product.category !== lastCategory) {
+      rows.push(
+        <ProductCategoryRow
+          category={product.category}
+          key={product.category} />
+      );
+    }
+    rows.push(
+      <ProductRow
+        product={product}
+        key={product.name} />
+    );
+    lastCategory = product.category;
+  });
+
+
+  // 방법 3. 위 코드에서 forEach에서 분기해주는 부분을 따로 function 으로 빼는 것도 가능
+  function shouldIncludeProduct(product, filterText, inStockOnly) {
+    if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1) {
+      return false;
+    }
+    if (inStockOnly && !product.stocked) {
+      return false;
+    }
+    return true;
+  }
+
+  products.forEach((product) => {
+    if (!shouldIncludeProduct(product, filterText, inStockOnly)) {
+      return;
+    }
+    if (product.category !== lastCategory) {
+      rows.push(
+        <ProductCategoryRow
+          category={product.category}
+          key={product.category} />
+      );
+    }
+    rows.push(
+      <ProductRow
+        product={product}
+        key={product.name} />
+    );
+    lastCategory = product.category;
+  });
 
   // 내가 한 방법은 유지 보수 및 생산성이 떨어짐, 코드 변경이 되면 너무 많은 곳을 바꿔야함
   function insert(product){
@@ -104,6 +161,7 @@ function ProductTable({ products, searchWord, showStocked }) {
       }
     })
   }
+
   return (
     <table>
       <thead>
