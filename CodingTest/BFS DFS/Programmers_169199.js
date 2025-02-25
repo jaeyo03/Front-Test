@@ -32,7 +32,7 @@ function solution(board) {
   visited[start[0]][start[1]] = true;
 
   while (queue.length > 0) {
-    const current = queue.splice(0,1)[0];
+    const current = queue.splice(0,1)[0]; // shift 쓰는게 나았을듯
     const y = current[0];
     const x = current[1];
     const count = current[2];
