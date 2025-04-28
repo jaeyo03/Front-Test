@@ -10,7 +10,7 @@ function solution(k, room_number) {
     }
 
     // 이미 배정된 방이라면, parent.get(x)부터 다음 빈 방을 찾아
-    // 경로 압축 해 주기
+    // 경로 압축
     const next = find(parent.get(x));
     parent.set(x, next + 1);
     return next;
